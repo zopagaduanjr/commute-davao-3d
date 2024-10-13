@@ -1,31 +1,43 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const polyline = document.querySelector("gmp-polyline-3d");
   const map = document.querySelector("gmp-map-3d");
 
+  let coordinates = [
+    { lat: 7.088590058201684, lng: 125.6157675218048 },
+    { lat: 7.086619621051946, lng: 125.61335788028943 },
+    { lat: 7.087388375757098, lng: 125.61301131594766 },
+    { lat: 7.08783344368445, lng: 125.61357805057715 },
+    { lat: 7.088508306276241, lng: 125.61303443179159 },
+  ];
+
   customElements.whenDefined(polyline.localName).then(() => {
-    polyline.coordinates = [
-      { lat: 37.80515638571346, lng: -122.4032569467164 },
-      { lat: 37.80337073509504, lng: -122.4012878349353 },
-      { lat: 37.79925208843463, lng: -122.3976697250461 },
-      { lat: 37.7989102378512, lng: -122.3983408725656 },
-      { lat: 37.79887832784348, lng: -122.3987094864192 },
-      { lat: 37.79786443410338, lng: -122.4066878788802 },
-      { lat: 37.79549248916587, lng: -122.4032992702785 },
-      { lat: 37.78861484290265, lng: -122.4019489189814 },
-      { lat: 37.78618687561075, lng: -122.398969592545 },
-      { lat: 37.7892310309145, lng: -122.3951458683092 },
-      { lat: 37.7916358762409, lng: -122.3981969390652 },
-    ];
+    polyline.coordinates = coordinates;
   });
 
-  customElements.whenDefined(map.localName).then(() => {
+  for (let i = 0; i < coordinates.length; i++) {
+    let coord = coordinates[i];
     map.flyCameraTo({
       endCamera: {
-        center: { lat: 37.6191, lng: -122.3816, altitude: 24 },
-        tilt: 67.5,
-        range: 1000,
+        center: { lat: coord.lat, lng: coord.lng, altitude: 0 },
+        tilt: 45,
+        range: 500,
       },
       durationMillis: 5000,
     });
-  });
+    await new Promise((resolve, reject) => {
+      setTimeout(resolve, 5000); // 500 milliseconds delay
+    });
+    console.log("Camera has flown to", coord.lat, coord.lng);
+  }
+
+  // customElements.whenDefined(map.localName).then(() => {
+  //   map.flyCameraTo({
+  //     endCamera: {
+  //       center: { lat: 7.088590058201684, lng: 125.6157675218048, altitude: 0 },
+  //       tilt: 45,
+  //       range: 2500,
+  //     },
+  //     durationMillis: 5000,
+  //   });
+  // });
 });
