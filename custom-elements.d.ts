@@ -16,6 +16,8 @@ declare namespace JSX {
       'altitude-mode'?: string;
       'stroke-color'?: string;
       'stroke-width'?: string;
+      extruded?;
+      geodesic?;
     };
   }
 }
