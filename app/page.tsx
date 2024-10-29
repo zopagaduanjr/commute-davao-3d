@@ -1,11 +1,26 @@
 "use client";
 
 import Script from "next/script";
-import Card from "../components/Card";
-import { roadPlotCoords } from "@/constants";
+import Card from "@/components/Card";
+import RoutesCard from "@/components/RoutesCard";
+import { routeOneCoords, routeTwoCoords } from "@/constants";
+import { useState, useRef } from "react";
 
 export default function Home() {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const mapRef = useRef<HTMLElement | null>(null);
+  const [polylineRoutes, setPolylineRoutes] = useState<
+    | {
+        id: string;
+        polyline: HTMLElement;
+      }[]
+    | null
+  >(null);
+
+  const routes = [
+    { id: "route1", label: "Route 1", checked: false },
+    { id: "route2", label: "Route 2", checked: false },
+  ];
 
   const delay = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
@@ -30,27 +45,49 @@ export default function Home() {
     }
   };
 
-  const plotRoute = async () => {
-    const polyline = document.querySelector("gmp-polyline-3d");
-    if (polyline) {
-      let coordinates = [
-        { lat: 7.088590058201684, lng: 125.6157675218048 },
-        { lat: 7.086619621051946, lng: 125.61335788028943 },
-        { lat: 7.087388375757098, lng: 125.61301131594766 },
-        { lat: 7.08783344368445, lng: 125.61357805057715 },
-        { lat: 7.088508306276241, lng: 125.61303443179159 },
-      ];
-      coordinates = roadPlotCoords;
-      customElements.whenDefined(polyline.localName).then(() => {
-        (polyline as any).coordinates = coordinates;
-      });
-    } else {
-      console.error("Polyline element not found");
+  const plotRoute = async (
+    id: string,
+    routeCoord: { lat: number; lng: number }[]
+  ) => {
+    const map = mapRef.current;
+    const poly = document.createElement("gmp-polyline-3d");
+    poly.setAttribute("altitude-mode", "clamp-to-ground");
+    poly.setAttribute("stroke-color", "rgba(25, 102, 210, 0.75)");
+    poly.setAttribute("stroke-width", "10");
+    map!.appendChild(poly);
+
+    customElements.whenDefined(poly.localName).then(() => {
+      (poly as any).coordinates = routeCoord;
+    });
+    setPolylineRoutes((prevRoutes) => [
+      ...(prevRoutes || []),
+      { id: id, polyline: poly },
+    ]);
+  };
+
+  const removeRoute = async (id: string) => {
+    if (polylineRoutes) {
+      const route = polylineRoutes.find((route) => route.id === id);
+      if (route) {
+        route.polyline.remove();
+      }
     }
   };
 
   const handleButtonClickTwo = async () => {
     await cameraFollowPath(roadPlotCoords);
+  };
+
+  const handleCheckboxChange = (id: string, checked: boolean) => {
+    if (checked) {
+      if (id === "route1") {
+        plotRoute(id, routeOneCoords);
+      } else if (id === "route2") {
+        plotRoute(id, routeTwoCoords);
+      }
+    } else {
+      removeRoute(id);
+    }
   };
 
   return (
@@ -70,19 +107,9 @@ export default function Home() {
         range="2500"
         tilt="45"
         center="7.087238671006556,125.61437310997654,165"
-      >
-        <gmp-polyline-3d
-          altitude-mode="clamp-to-ground"
-          stroke-color="rgba(25, 102, 210, 0.75)"
-          stroke-width="10"
-        ></gmp-polyline-3d>
-      </gmp-map-3d>
-      <Card
-        title="Obrero"
-        description="Obrero is a route in lorem ipsum."
-        buttonClickOne={plotRoute}
-        buttonClickTwo={handleButtonClickTwo}
-      />
+        ref={mapRef}
+      ></gmp-map-3d>
+      <RoutesCard routes={routes}></RoutesCard>
     </>
   );
 }
