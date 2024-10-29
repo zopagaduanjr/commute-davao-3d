@@ -1,23 +1,17 @@
 "use client";
 
+import { useRef } from "react";
 import Script from "next/script";
-import Card from "@/components/Card";
-import RoutesCard from "@/components/RoutesCard";
 import { routeOneCoords, routeTwoCoords } from "@/constants";
-import { useState, useRef } from "react";
+import { LatLng, Route } from "@/types";
+import RoutesCard from "@/components/RoutesCard";
 
 export default function Home() {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-  const mapRef = useRef<HTMLElement | null>(null);
-  const [polylineRoutes, setPolylineRoutes] = useState<
-    | {
-        id: string;
-        polyline: HTMLElement;
-      }[]
-    | null
-  >(null);
 
-  const routes = [
+  const mapRef = useRef<HTMLElement | null>(null);
+
+  const routes: Route[] = [
     { id: "route1", label: "Route 1", checked: false },
     { id: "route2", label: "Route 2", checked: false },
   ];
@@ -45,48 +39,37 @@ export default function Home() {
     }
   };
 
-  const plotRoute = async (
-    id: string,
-    routeCoord: { lat: number; lng: number }[]
-  ) => {
+  const plotRoute = async (id: string, routeCoord: LatLng[]) => {
     const map = mapRef.current;
     const poly = document.createElement("gmp-polyline-3d");
     poly.setAttribute("altitude-mode", "clamp-to-ground");
     poly.setAttribute("stroke-color", "rgba(25, 102, 210, 0.75)");
     poly.setAttribute("stroke-width", "10");
+    poly.setAttribute("id", id);
     map!.appendChild(poly);
 
     customElements.whenDefined(poly.localName).then(() => {
       (poly as any).coordinates = routeCoord;
     });
-    setPolylineRoutes((prevRoutes) => [
-      ...(prevRoutes || []),
-      { id: id, polyline: poly },
-    ]);
-  };
-
-  const removeRoute = async (id: string) => {
-    if (polylineRoutes) {
-      const route = polylineRoutes.find((route) => route.id === id);
-      if (route) {
-        route.polyline.remove();
-      }
-    }
   };
 
   const handleButtonClickTwo = async () => {
     await cameraFollowPath(roadPlotCoords);
   };
 
-  const handleCheckboxChange = (id: string, checked: boolean) => {
-    if (checked) {
-      if (id === "route1") {
-        plotRoute(id, routeOneCoords);
-      } else if (id === "route2") {
-        plotRoute(id, routeTwoCoords);
+  const handleCheckboxChange = (route: Route) => {
+    if (!route.checked) {
+      if (route.id === "route1") {
+        plotRoute(route.id, routeOneCoords);
+      } else if (route.id === "route2") {
+        plotRoute(route.id, routeTwoCoords);
       }
     } else {
-      removeRoute(id);
+      const map = mapRef.current;
+      const poly = map!.querySelector(`#${route.id}`);
+      if (poly) {
+        poly.remove();
+      }
     }
   };
 
@@ -109,7 +92,10 @@ export default function Home() {
         center="7.087238671006556,125.61437310997654,165"
         ref={mapRef}
       ></gmp-map-3d>
-      <RoutesCard routes={routes}></RoutesCard>
+      <RoutesCard
+        routes={routes}
+        onCheckboxChange={handleCheckboxChange}
+      ></RoutesCard>
     </>
   );
 }
