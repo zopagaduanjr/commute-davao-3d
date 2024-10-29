@@ -1,43 +1,21 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Script from "next/script";
 import { routeOneCoords, routeTwoCoords } from "@/constants";
 import { LatLng, Route } from "@/types";
 import RoutesCard from "@/components/RoutesCard";
+import RouteInfoCard from "@/components/RouteInfoCard";
 
 export default function Home() {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   const mapRef = useRef<HTMLElement | null>(null);
 
-  const routes: Route[] = [
+  const [routes, setRoutes] = useState<Route[]>([
     { id: "route1", label: "Route 1", checked: false },
     { id: "route2", label: "Route 2", checked: false },
-  ];
-
-  const delay = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
-
-  const cameraFollowPath = async (
-    coordinates: { lat: number; lng: number }[]
-  ) => {
-    const map = document.querySelector("gmp-map-3d");
-    if (map) {
-      for (let i = 0; i < coordinates.length; i += 8) {
-        let coord = coordinates[i];
-        (map as any).flyCameraTo({
-          endCamera: {
-            center: { lat: coord.lat, lng: coord.lng, altitude: 0 },
-            tilt: 45,
-            range: 300,
-          },
-          durationMillis: 3434,
-        });
-        await delay(3500);
-      }
-    }
-  };
+  ]);
 
   const plotRoute = async (id: string, routeCoord: LatLng[]) => {
     const map = mapRef.current;
@@ -53,23 +31,54 @@ export default function Home() {
     });
   };
 
-  const handleButtonClickTwo = async () => {
-    await cameraFollowPath(roadPlotCoords);
-  };
-
-  const handleCheckboxChange = (route: Route) => {
-    if (!route.checked) {
-      if (route.id === "route1") {
-        plotRoute(route.id, routeOneCoords);
-      } else if (route.id === "route2") {
-        plotRoute(route.id, routeTwoCoords);
+  const handleCheckboxChange = (updatedRoute: Route) => {
+    const updatedRoutes = routes.map((route) =>
+      route.id === updatedRoute.id
+        ? { ...route, checked: !route.checked }
+        : route
+    );
+    setRoutes(updatedRoutes);
+    if (!updatedRoute.checked) {
+      if (updatedRoute.id === "route1") {
+        plotRoute(updatedRoute.id, routeOneCoords);
+      } else if (updatedRoute.id === "route2") {
+        plotRoute(updatedRoute.id, routeTwoCoords);
       }
     } else {
       const map = mapRef.current;
-      const poly = map!.querySelector(`#${route.id}`);
+      const poly = map!.querySelector(`#${updatedRoute.id}`);
       if (poly) {
         poly.remove();
       }
+    }
+  };
+
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
+  const cameraFollowPath = async (
+    coordinates: { lat: number; lng: number }[]
+  ) => {
+    const map = mapRef.current;
+    for (let i = 0; i < coordinates.length; i += 8) {
+      let coord = coordinates[i];
+      (map as any).flyCameraTo({
+        endCamera: {
+          center: { lat: coord.lat, lng: coord.lng, altitude: 0 },
+          tilt: 45,
+          range: 300,
+        },
+        durationMillis: 3434,
+      });
+      await delay(3500);
+    }
+  };
+
+  const handleRouteInfoCardButton = async (route: Route) => {
+    if (route.id === "route1") {
+      await cameraFollowPath(routeOneCoords);
+    } else if (route.id === "route2") {
+      await cameraFollowPath(routeOneCoords);
     }
   };
 
@@ -96,6 +105,12 @@ export default function Home() {
         routes={routes}
         onCheckboxChange={handleCheckboxChange}
       ></RoutesCard>
+      {routes.some((route) => route.checked) && (
+        <RouteInfoCard
+          routes={routes}
+          onButtonClick={handleRouteInfoCardButton}
+        />
+      )}
     </>
   );
 }

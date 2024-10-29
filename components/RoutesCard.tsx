@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Route } from "@/types";
 
 interface RoutesCardProps {
@@ -10,17 +10,7 @@ const RoutesCard: React.FC<RoutesCardProps> = ({
   routes,
   onCheckboxChange,
 }) => {
-  const [routeCheckboxes, setRouteCheckboxes] = useState<Route[]>(routes);
-
-  useEffect(() => {
-    setRouteCheckboxes(routes);
-  }, [routes]);
-
   const handleCheckboxChange = (rCheckbox: Route) => {
-    const updatedRCheckboxes = routeCheckboxes.map((rcb) =>
-      rcb.id === rCheckbox.id ? { ...rcb, checked: !rcb.checked } : rcb
-    );
-    setRouteCheckboxes(updatedRCheckboxes);
     onCheckboxChange(rCheckbox);
   };
 
@@ -28,7 +18,7 @@ const RoutesCard: React.FC<RoutesCardProps> = ({
     <div className="absolute top-4 left-4 bg-white shadow-lg rounded-lg p-4">
       <h2 className="text-lg font-semibold">Routes</h2>
       <p className="text-sm text-gray-600">Check the routes you want to see</p>
-      {routeCheckboxes.map((rCheckbox) => (
+      {routes.map((rCheckbox) => (
         <div key={rCheckbox.id} className="flex items-center mt-2">
           <input
             type="checkbox"
