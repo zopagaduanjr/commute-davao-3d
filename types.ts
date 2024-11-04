@@ -1,7 +1,8 @@
 export interface Route {
   id: string;
   label: string;
-  checked: boolean;
+  isChecked: boolean;
+  isCameraFollowed: boolean;
 }
 
 export interface LatLng {

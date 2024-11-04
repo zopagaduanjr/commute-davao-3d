@@ -23,7 +23,7 @@ const RoutesCard: React.FC<RoutesCardProps> = ({
           <input
             type="checkbox"
             id={rCheckbox.id}
-            checked={rCheckbox.checked}
+            checked={rCheckbox.isChecked}
             onChange={() => handleCheckboxChange(rCheckbox)}
             className="form-checkbox h-5 w-5 text-blue-600"
           />

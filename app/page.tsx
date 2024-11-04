@@ -11,10 +11,21 @@ export default function Home() {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   const mapRef = useRef<HTMLElement | null>(null);
+  const cancelRef = useRef<boolean>(false);
 
   const [routes, setRoutes] = useState<Route[]>([
-    { id: "route1", label: "Route 1", checked: false },
-    { id: "route2", label: "Route 2", checked: false },
+    {
+      id: "route1",
+      label: "Route 1",
+      isChecked: false,
+      isCameraFollowed: false,
+    },
+    {
+      id: "route2",
+      label: "Route 2",
+      isChecked: false,
+      isCameraFollowed: false,
+    },
   ]);
 
   const plotRoute = async (id: string, routeCoord: LatLng[]) => {
@@ -34,11 +45,11 @@ export default function Home() {
   const handleCheckboxChange = (updatedRoute: Route) => {
     const updatedRoutes = routes.map((route) =>
       route.id === updatedRoute.id
-        ? { ...route, checked: !route.checked }
+        ? { ...route, isChecked: !route.isChecked }
         : route
     );
     setRoutes(updatedRoutes);
-    if (!updatedRoute.checked) {
+    if (!updatedRoute.isChecked) {
       if (updatedRoute.id === "route1") {
         plotRoute(updatedRoute.id, routeOneCoords);
       } else if (updatedRoute.id === "route2") {
@@ -56,12 +67,61 @@ export default function Home() {
   const delay = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
 
+  const haversineDistance = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ): number => {
+    const R = 6371000; // Radius of the Earth in meters
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in meters
+  };
+
+  const divideRouteIntoSegments = (
+    route: { lat: number; lng: number }[],
+    n: number
+  ): number[] => {
+    const indexes: number[] = [0];
+    let accumulatedDistance = 0;
+
+    for (let i = 0; i < route.length - 1; i++) {
+      const distance = haversineDistance(
+        route[i].lat,
+        route[i].lng,
+        route[i + 1].lat,
+        route[i + 1].lng
+      );
+
+      accumulatedDistance += distance;
+
+      if (accumulatedDistance >= n) {
+        indexes.push(i + 1);
+        accumulatedDistance = 0;
+      }
+    }
+
+    return indexes;
+  };
+
   const cameraFollowPath = async (
     coordinates: { lat: number; lng: number }[]
   ) => {
     const map = mapRef.current;
-    for (let i = 0; i < coordinates.length; i += 8) {
-      let coord = coordinates[i];
+    const indexes = divideRouteIntoSegments(coordinates, 75);
+    for (let i = 0; i < indexes.length; i++) {
+      if (cancelRef.current) {
+        break;
+      }
+      let coord = coordinates[indexes[i]];
       (map as any).flyCameraTo({
         endCamera: {
           center: { lat: coord.lat, lng: coord.lng, altitude: 0 },
@@ -74,11 +134,22 @@ export default function Home() {
     }
   };
 
-  const handleRouteInfoCardButton = async (route: Route) => {
-    if (route.id === "route1") {
-      await cameraFollowPath(routeOneCoords);
-    } else if (route.id === "route2") {
-      await cameraFollowPath(routeOneCoords);
+  const handleRouteInfoCardButton = async (selectedRoute: Route) => {
+    const updatedRoutes = routes.map((route) =>
+      route.id === selectedRoute.id
+        ? { ...route, isCameraFollowed: !selectedRoute.isCameraFollowed }
+        : route
+    );
+    setRoutes(updatedRoutes);
+    if (!selectedRoute.isCameraFollowed) {
+      cancelRef.current = false;
+      selectedRoute.id === "route1"
+        ? await cameraFollowPath(routeOneCoords)
+        : await cameraFollowPath(routeTwoCoords);
+    } else {
+      const map = mapRef.current;
+      cancelRef.current = true;
+      (map as any).stopCameraAnimation();
     }
   };
 
@@ -105,7 +176,7 @@ export default function Home() {
         routes={routes}
         onCheckboxChange={handleCheckboxChange}
       ></RoutesCard>
-      {routes.some((route) => route.checked) && (
+      {routes.some((route) => route.isChecked) && (
         <RouteInfoCard
           routes={routes}
           onButtonClick={handleRouteInfoCardButton}
