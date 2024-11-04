@@ -6,6 +6,7 @@ import { routeOneCoords, routeTwoCoords } from "@/constants";
 import { LatLng, Route } from "@/types";
 import RoutesCard from "@/components/RoutesCard";
 import RouteInfoCard from "@/components/RouteInfoCard";
+import { getRandomColor, haversineDistance, delay } from "@/utils";
 
 export default function Home() {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -32,7 +33,7 @@ export default function Home() {
     const map = mapRef.current;
     const poly = document.createElement("gmp-polyline-3d");
     poly.setAttribute("altitude-mode", "clamp-to-ground");
-    poly.setAttribute("stroke-color", "rgba(25, 102, 210, 0.75)");
+    poly.setAttribute("stroke-color", getRandomColor());
     poly.setAttribute("stroke-width", "10");
     poly.setAttribute("id", id);
     map!.appendChild(poly);
@@ -62,28 +63,6 @@ export default function Home() {
         poly.remove();
       }
     }
-  };
-
-  const delay = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
-
-  const haversineDistance = (
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number
-  ): number => {
-    const R = 6371000; // Radius of the Earth in meters
-    const dLat = (lat2 - lat1) * (Math.PI / 180);
-    const dLon = (lon2 - lon1) * (Math.PI / 180);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * (Math.PI / 180)) *
-        Math.cos(lat2 * (Math.PI / 180)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in meters
   };
 
   const divideRouteIntoSegments = (
@@ -135,13 +114,24 @@ export default function Home() {
   };
 
   const handleRouteInfoCardButton = async (selectedRoute: Route) => {
-    const updatedRoutes = routes.map((route) =>
-      route.id === selectedRoute.id
-        ? { ...route, isCameraFollowed: !selectedRoute.isCameraFollowed }
-        : route
-    );
-    setRoutes(updatedRoutes);
     if (!selectedRoute.isCameraFollowed) {
+      //if there is isCameraFollowed, stop the camera animation and set isCameraFollowed to false
+      if (routes.some((route) => route.isCameraFollowed)) {
+        const map = mapRef.current;
+        cancelRef.current = true;
+        (map as any).stopCameraAnimation;
+        await delay(1000);
+        const updatedRoutes = routes.map((route) =>
+          route.isCameraFollowed ? { ...route, isCameraFollowed: false } : route
+        );
+        setRoutes(updatedRoutes);
+      }
+      const updatedRoutes = routes.map((route) =>
+        route.id === selectedRoute.id
+          ? { ...route, isCameraFollowed: !selectedRoute.isCameraFollowed }
+          : route
+      );
+      setRoutes(updatedRoutes);
       cancelRef.current = false;
       selectedRoute.id === "route1"
         ? await cameraFollowPath(routeOneCoords)
@@ -150,6 +140,12 @@ export default function Home() {
       const map = mapRef.current;
       cancelRef.current = true;
       (map as any).stopCameraAnimation();
+      const updatedRoutes = routes.map((route) =>
+        route.id === selectedRoute.id
+          ? { ...route, isCameraFollowed: !selectedRoute.isCameraFollowed }
+          : route
+      );
+      setRoutes(updatedRoutes);
     }
   };
 
