@@ -26,16 +26,17 @@ const RouteInfoCard: React.FC<CardProps> = ({ routes, onButtonClick }) => {
   };
 
   return (
-    <div className="absolute top-4 right-4 bg-white shadow-lg rounded-lg p-4">
+    <div className="absolute top-4 right-4 bg-gray-800 text-white p-4 shadow-lg rounded-lg p-4 max-w-md">
       <h2 className="text-lg font-semibold">Route Information</h2>
       <Dropdown
         label={selectedOption.label || ""}
         options={currentRoutes}
         onSelect={handleSelect}
       />
-      <div className="mt-2 flex items-center">
+      <div className="mt-2 flex flex-col items-start">
+        <p className="text-sm mb-2">{selectedOption.info}</p>
         <button
-          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           onClick={() => onButtonClick(selectedOption)}
         >
           {selectedOption.isFollowed ? "Stop Following Route" : "Follow Route"}

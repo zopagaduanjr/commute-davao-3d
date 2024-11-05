@@ -2,7 +2,8 @@
 
 import { useRef, useState } from "react";
 import Script from "next/script";
-import { routeOneCoords, routeTwoCoords } from "@/constants";
+import { obreroCoords, routeTwoCoords } from "@/route-coords";
+import { obreroInfo } from "@/route-info";
 import { Route } from "@/types";
 import RoutesCard from "@/components/RoutesCard";
 import RouteInfoCard from "@/components/RouteInfoCard";
@@ -13,13 +14,14 @@ export default function Home() {
 
   const mapRef = useRef<HTMLElement | null>(null);
   const cancelRef = useRef<boolean>(false);
-  const isCameraFollowEnabledRef = useRef<boolean>(false);
+  const routeFollowingRef = useRef<string | null>(null);
 
   const [routes, setRoutes] = useState<Route[]>([
     {
-      id: "route1",
-      label: "Route 1",
-      latlngs: routeOneCoords,
+      id: "obrero",
+      label: "Obrero",
+      info: obreroInfo,
+      latlngs: obreroCoords,
       color: tailwindColors.blue,
       isChecked: false,
       isFollowed: false,
@@ -27,6 +29,7 @@ export default function Home() {
     {
       id: "route2",
       label: "Route 2",
+      info: "",
       latlngs: routeTwoCoords,
       color: tailwindColors.green,
       isChecked: false,
@@ -48,18 +51,16 @@ export default function Home() {
     });
   };
 
-  const startCameraFollow = async (
-    coordinates: { lat: number; lng: number }[]
-  ) => {
+  const startCameraFollow = async (route: Route) => {
     const map = mapRef.current;
-    const indexes = divideRouteIntoSegments(coordinates, 75);
-    isCameraFollowEnabledRef.current = true;
+    const indexes = divideRouteIntoSegments(route.latlngs, 75);
+    routeFollowingRef.current = route.id;
     for (let i = 0; i < indexes.length; i++) {
       if (cancelRef.current) {
         cancelRef.current = false;
         break;
       }
-      let coord = coordinates[indexes[i]];
+      let coord = route.latlngs[indexes[i]];
       (map as any).flyCameraTo({
         endCamera: {
           center: { lat: coord.lat, lng: coord.lng, altitude: 0 },
@@ -74,7 +75,7 @@ export default function Home() {
 
   const stopCameraFollow = () => {
     cancelRef.current = true;
-    isCameraFollowEnabledRef.current = false;
+    routeFollowingRef.current = null;
     const map = mapRef.current;
     (map as any).stopCameraAnimation();
   };
@@ -100,7 +101,18 @@ export default function Home() {
     if (!selectedRoute.isChecked) {
       plotRoute(selectedRoute);
     } else {
-      stopCameraFollow();
+      if (
+        selectedRoute.id === routeFollowingRef.current &&
+        selectedRoute.isFollowed
+      ) {
+        stopCameraFollow();
+        const updatedRoutes = routes.map((route) =>
+          route.id === selectedRoute.id
+            ? { ...route, isChecked: !route.isChecked, isFollowed: false }
+            : route
+        );
+        setRoutes(updatedRoutes);
+      }
       const map = mapRef.current;
       const poly = map!.querySelector(`#${selectedRoute.id}`);
       if (poly) {
@@ -119,11 +131,11 @@ export default function Home() {
     if (selectedRoute.isFollowed) {
       stopCameraFollow();
     } else {
-      if (isCameraFollowEnabledRef.current) {
+      if (routeFollowingRef.current) {
         stopCameraFollow();
         await waitForCancel();
       }
-      startCameraFollow(selectedRoute.latlngs);
+      startCameraFollow(selectedRoute);
     }
   };
 

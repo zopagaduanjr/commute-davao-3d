@@ -1,6 +1,7 @@
 export interface Route {
   id: string;
   label: string;
+  info: string;
   latlngs: LatLng[];
   color: string;
   isChecked: boolean;
