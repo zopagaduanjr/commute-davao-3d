@@ -4,10 +4,11 @@ import { useRef, useState } from "react";
 import Script from "next/script";
 import { obreroCoords, routeTwoCoords } from "@/route-coords";
 import { obreroInfo } from "@/route-info";
-import { Route } from "@/types";
+import { Landmark, Route } from "@/types";
 import RoutesCard from "@/components/RoutesCard";
 import RouteInfoCard from "@/components/RouteInfoCard";
 import { tailwindColors, divideRouteIntoSegments, delay } from "@/utils";
+import { obreroLandmarks } from "@/route-landmarks";
 
 export default function Home() {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -21,6 +22,7 @@ export default function Home() {
       id: "obrero",
       label: "Obrero",
       info: obreroInfo,
+      landmarks: obreroLandmarks,
       latlngs: obreroCoords,
       color: tailwindColors.blue,
       isChecked: false,
@@ -30,12 +32,15 @@ export default function Home() {
       id: "route2",
       label: "Route 2",
       info: "",
+      landmarks: [],
       latlngs: routeTwoCoords,
       color: tailwindColors.green,
       isChecked: false,
       isFollowed: false,
     },
   ]);
+
+  const [markers, setMarkers] = useState<string[]>([]);
 
   const plotRoute = async (route: Route) => {
     const map = mapRef.current;
@@ -63,9 +68,9 @@ export default function Home() {
       let coord = route.latlngs[indexes[i]];
       (map as any).flyCameraTo({
         endCamera: {
-          center: { lat: coord.lat, lng: coord.lng, altitude: 0 },
-          tilt: 45,
-          range: 300,
+          center: { ...coord, altitude: 0 },
+          tilt: i === 0 ? 45 : (map as any).tilt,
+          range: i === 0 ? 300 : (map as any).range,
         },
         durationMillis: 3434,
       });
@@ -73,11 +78,12 @@ export default function Home() {
     }
   };
 
-  const stopCameraFollow = () => {
+  const stopCameraFollow = async () => {
     cancelRef.current = true;
     routeFollowingRef.current = null;
     const map = mapRef.current;
     (map as any).stopCameraAnimation();
+    await waitForCancel();
   };
 
   const waitForCancel = async () => {
@@ -133,10 +139,64 @@ export default function Home() {
     } else {
       if (routeFollowingRef.current) {
         stopCameraFollow();
-        await waitForCancel();
       }
       startCameraFollow(selectedRoute);
     }
+  };
+
+  const plotMarker = async (landmark: Landmark) => {
+    console.log("amdg", markers);
+    if (!markers.includes(landmark.id)) {
+      const map = mapRef.current;
+      const marker = document.createElement("gmp-marker-3d");
+      marker.setAttribute("altitude-mode", "clamp-to-ground");
+      marker.setAttribute("draws-when-occluded", "true");
+      marker.setAttribute("id", landmark.id);
+      map!.appendChild(marker);
+
+      customElements.whenDefined(marker.localName).then(() => {
+        (marker as any).position = landmark.latlng;
+      });
+      (map as any).flyCameraTo({
+        endCamera: {
+          center: { ...landmark.latlng, altitude: 0 },
+          tilt: 45,
+          range: 300,
+        },
+        durationMillis: 3434,
+      });
+      await delay(3500);
+      (map as any).flyCameraAround({
+        camera: {
+          center: { ...landmark.latlng, altitude: 0 },
+          tilt: 45,
+          range: 300,
+        },
+        durationMillis: 60000,
+        rounds: 1,
+      });
+      setMarkers([...markers, landmark.id]);
+    } else {
+      const map = mapRef.current;
+      const marker = map!.querySelector(`#${landmark.id}`);
+      console.log("amdg marker", marker);
+      if (marker) {
+        marker.remove();
+        setMarkers(markers.filter((m) => m !== landmark.id));
+      }
+    }
+  };
+
+  const handleLandmarkClick = (landmark: Landmark) => {
+    if (routeFollowingRef.current) {
+      stopCameraFollow();
+      const updatedRoutes = routes.map((route) => ({
+        ...route,
+        isFollowed: false,
+      }));
+      setRoutes(updatedRoutes);
+    }
+    plotMarker(landmark);
   };
 
   return (
@@ -163,7 +223,11 @@ export default function Home() {
         onCheckboxChange={handleTogglePlot}
       ></RoutesCard>
       {routes.some((route) => route.isChecked) && (
-        <RouteInfoCard routes={routes} onButtonClick={handleToggleFollow} />
+        <RouteInfoCard
+          routes={routes}
+          onFollowButtonClick={handleToggleFollow}
+          onLandmarkButtonClick={handleLandmarkClick}
+        />
       )}
     </>
   );

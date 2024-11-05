@@ -11,7 +11,7 @@ const RoutesCard: React.FC<RoutesCardProps> = ({
   onCheckboxChange,
 }) => {
   return (
-    <div className="absolute top-4 left-4 bg-white shadow-lg rounded-lg p-4">
+    <div className="absolute top-4 left-4 bg-white text-black shadow-lg rounded-lg p-4">
       <h2 className="text-lg font-semibold">Jeepney Routes</h2>
       <p className="text-sm text-gray-600">Check the routes you want to see</p>
       {routes.map((rCheckbox) => (

@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Route } from "@/types";
+import { Landmark, Route } from "@/types";
 import Dropdown from "@/components/Dropdown";
 
 interface CardProps {
   routes: Route[];
-  onButtonClick: (route: Route) => void;
+  onFollowButtonClick: (route: Route) => void;
+  onLandmarkButtonClick: (landmark: Landmark) => void;
 }
 
-const RouteInfoCard: React.FC<CardProps> = ({ routes, onButtonClick }) => {
+const RouteInfoCard: React.FC<CardProps> = ({
+  routes,
+  onFollowButtonClick,
+  onLandmarkButtonClick,
+}) => {
   const currentRoutes = routes.filter((route) => route.isChecked);
   const [selectedOption, setSelectedOption] = useState<Route>(currentRoutes[0]);
 
@@ -37,11 +42,27 @@ const RouteInfoCard: React.FC<CardProps> = ({ routes, onButtonClick }) => {
       </div>
       <div className="mt-2 flex flex-col items-start max-h-64 overflow-y-auto">
         <p className="text-sm mb-2">{selectedOption.info}</p>
+        {selectedOption.landmarks.length > 0 && (
+          <div>
+            <h3 className="text-sm font-semibold">Landmarks</h3>
+            <ul className="list-disc list-inside">
+              {selectedOption.landmarks.map((landmark) => (
+                <li
+                  key={landmark.label}
+                  className="text-xs"
+                  onClick={() => onLandmarkButtonClick(landmark)}
+                >
+                  {landmark.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       <div className="sticky bottom-0 w-full">
         <button
           className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          onClick={() => onButtonClick(selectedOption)}
+          onClick={() => onFollowButtonClick(selectedOption)}
         >
           {selectedOption.isFollowed ? "Stop Following Route" : "Follow Route"}
         </button>
