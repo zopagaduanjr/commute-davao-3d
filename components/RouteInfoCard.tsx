@@ -31,9 +31,11 @@ const RouteInfoCard: React.FC<CardProps> = ({
   };
 
   return (
-    <div className="absolute top-4 right-4 bg-gray-800 text-white p-4 shadow-lg rounded-lg max-w-md ">
-      <div className="sticky top-0">
-        <h2 className="text-lg font-semibold">Route Information</h2>
+    <div className="absolute top-4 right-4 bg-gray-800 text-white p-4 shadow-lg rounded-lg max-w-md">
+      <div className="sticky top-0 flex flex-row justify-between">
+        <h2 className="text-lg font-semibold">
+          {selectedOption.label} Route Information
+        </h2>
         <Dropdown
           label={selectedOption.label || ""}
           options={currentRoutes}
@@ -41,23 +43,21 @@ const RouteInfoCard: React.FC<CardProps> = ({
         />
       </div>
       <div className="mt-2 flex flex-col items-start max-h-64 overflow-y-auto">
-        <p className="text-sm mb-2">{selectedOption.info}</p>
         {selectedOption.landmarks.length > 0 && (
           <div>
-            <h3 className="text-sm font-semibold">Landmarks</h3>
-            <ul className="list-disc list-inside">
-              {selectedOption.landmarks.map((landmark) => (
-                <li
-                  key={landmark.label}
-                  className="text-xs"
-                  onClick={() => onLandmarkButtonClick(landmark)}
-                >
-                  {landmark.label}
-                </li>
-              ))}
-            </ul>
+            <h3 className="text-lg font-semibold">Landmarks</h3>
+            {selectedOption.landmarks.map((landmark) => (
+              <div
+                key={landmark.label}
+                className="text-lg cursor-pointer text-gray-300 hover:underline"
+                onClick={() => onLandmarkButtonClick(landmark)}
+              >
+                {landmark.label}
+              </div>
+            ))}
           </div>
         )}
+        <p className="text-sm mt-2">{selectedOption.info}</p>
       </div>
       <div className="sticky bottom-0 w-full">
         <button

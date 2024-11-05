@@ -45,7 +45,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, options, onSelect }) => {
       </div>
 
       {isOpen && (
-        <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+        <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 max-h-56 overflow-y-auto">
           <div
             className="py-1"
             role="menu"
