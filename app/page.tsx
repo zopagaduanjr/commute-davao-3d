@@ -42,6 +42,18 @@ export default function Home() {
 
   const [markers, setMarkers] = useState<string[]>([]);
 
+  const setBounds = () => {
+    const map = mapRef.current;
+    if (map) {
+      (map as any).bounds = {
+        south: 6.8,
+        west: 125.2,
+        north: 7.3,
+        east: 125.7,
+      };
+    }
+  };
+
   const plotRoute = async (route: Route) => {
     const map = mapRef.current;
     const poly = document.createElement("gmp-polyline-3d");
@@ -206,6 +218,7 @@ export default function Home() {
         strategy="afterInteractive"
         onLoad={() => {
           console.log("Google Maps script loaded successfully");
+          setBounds();
         }}
         onError={(e) => {
           console.error("Error loading Google Maps script", e);
