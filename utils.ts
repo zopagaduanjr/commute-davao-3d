@@ -26,3 +26,29 @@ export const haversineDistance = (
 
 export const delay = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
+export const divideRouteIntoSegments = (
+  route: { lat: number; lng: number }[],
+  n: number
+): number[] => {
+  const indexes: number[] = [0];
+  let accumulatedDistance = 0;
+
+  for (let i = 0; i < route.length - 1; i++) {
+    const distance = haversineDistance(
+      route[i].lat,
+      route[i].lng,
+      route[i + 1].lat,
+      route[i + 1].lng
+    );
+
+    accumulatedDistance += distance;
+
+    if (accumulatedDistance >= n) {
+      indexes.push(i + 1);
+      accumulatedDistance = 0;
+    }
+  }
+
+  return indexes;
+};
