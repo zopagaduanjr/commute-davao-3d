@@ -12,22 +12,28 @@ const RoutesCard: React.FC<RoutesCardProps> = ({
 }) => {
   return (
     <div className="absolute top-4 left-4 bg-white text-black shadow-lg rounded-lg p-4">
-      <h2 className="text-lg font-semibold">Jeepney Routes</h2>
-      <p className="text-sm text-gray-600">Check the routes you want to see</p>
-      {routes.map((rCheckbox) => (
-        <div key={rCheckbox.id} className="flex items-center mt-2">
-          <input
-            type="checkbox"
-            id={rCheckbox.id}
-            checked={rCheckbox.isChecked}
-            onChange={() => onCheckboxChange(rCheckbox)}
-            className="form-checkbox h-5 w-5 text-blue-600"
-          />
-          <label htmlFor={rCheckbox.id} className="text-sm text-gray-600">
-            {rCheckbox.label}
-          </label>
-        </div>
-      ))}
+      <div className="sticky top-0 flex flex-col">
+        <h2 className="text-lg font-semibold">Jeepney Routes</h2>
+        <p className="text-base text-gray-600">
+          Check on the routes you want to view.
+        </p>
+      </div>
+      <div className="mt-2 flex flex-col items-start max-h-64 overflow-y-auto">
+        {routes.map((rCheckbox) => (
+          <div key={rCheckbox.id} className="flex items-center mt-2">
+            <input
+              type="checkbox"
+              id={rCheckbox.id}
+              checked={rCheckbox.isChecked}
+              onChange={() => onCheckboxChange(rCheckbox)}
+              className="form-checkbox h-5 w-5 text-blue-600"
+            />
+            <label htmlFor={rCheckbox.id} className="text-lg text-gray-800">
+              {rCheckbox.label}
+            </label>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

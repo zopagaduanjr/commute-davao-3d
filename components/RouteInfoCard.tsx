@@ -57,7 +57,7 @@ const RouteInfoCard: React.FC<CardProps> = ({
             ))}
           </div>
         )}
-        <p className="text-sm mt-2">{selectedOption.info}</p>
+        <p className="text-sm my-4">{selectedOption.info}</p>
       </div>
       <div className="sticky bottom-0 w-full">
         <button

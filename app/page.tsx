@@ -139,7 +139,7 @@ export default function Home() {
     }
   };
 
-  const handleToggleFollow = async (selectedRoute: Route) => {
+  const handleToggleFollow = (selectedRoute: Route) => {
     const updatedRoutes = routes.map((route) =>
       route.id === selectedRoute.id
         ? { ...route, isFollowed: !selectedRoute.isFollowed }
@@ -156,8 +156,7 @@ export default function Home() {
     }
   };
 
-  const plotMarker = async (landmark: Landmark) => {
-    console.log("amdg", markers);
+  const plotMarker = (landmark: Landmark) => {
     if (!markers.includes(landmark.id)) {
       const map = mapRef.current;
       const marker = document.createElement("gmp-marker-3d");
@@ -169,46 +168,47 @@ export default function Home() {
       customElements.whenDefined(marker.localName).then(() => {
         (marker as any).position = landmark.latlng;
       });
-      (map as any).flyCameraTo({
-        endCamera: {
-          center: { ...landmark.latlng, altitude: 0 },
-          tilt: 45,
-          range: 300,
-        },
-        durationMillis: 3434,
-      });
-      await delay(3500);
-      (map as any).flyCameraAround({
-        camera: {
-          center: { ...landmark.latlng, altitude: 0 },
-          tilt: 45,
-          range: 300,
-        },
-        durationMillis: 60000,
-        rounds: 1,
-      });
       setMarkers([...markers, landmark.id]);
-    } else {
-      const map = mapRef.current;
-      const marker = map!.querySelector(`#${landmark.id}`);
-      console.log("amdg marker", marker);
-      if (marker) {
-        marker.remove();
-        setMarkers(markers.filter((m) => m !== landmark.id));
-      }
     }
+    followMarker(landmark);
+  };
+
+  const followMarker = async (landmark: Landmark) => {
+    landmarkFollowingRef.current = true;
+    const map = mapRef.current;
+    (map as any).flyCameraTo({
+      endCamera: {
+        center: { ...landmark.latlng, altitude: 0 },
+        tilt: (map as any).tilt,
+        range: (map as any).range,
+      },
+      durationMillis: 3434,
+    });
+    await delay(3500);
+    landmarkFollowingRef.current = false;
+    (map as any).flyCameraAround({
+      camera: {
+        center: { ...landmark.latlng, altitude: 0 },
+        tilt: (map as any).tilt,
+        range: (map as any).range,
+      },
+      durationMillis: 30000,
+      rounds: 1,
+    });
   };
 
   const handleLandmarkClick = (landmark: Landmark) => {
-    if (routeFollowingRef.current) {
-      stopCameraFollow();
-      const updatedRoutes = routes.map((route) => ({
-        ...route,
-        isFollowed: false,
-      }));
-      setRoutes(updatedRoutes);
+    if (!landmarkFollowingRef.current) {
+      if (routeFollowingRef.current) {
+        stopCameraFollow();
+        const updatedRoutes = routes.map((route) => ({
+          ...route,
+          isFollowed: false,
+        }));
+        setRoutes(updatedRoutes);
+      }
+      plotMarker(landmark);
     }
-    plotMarker(landmark);
   };
 
   return (
