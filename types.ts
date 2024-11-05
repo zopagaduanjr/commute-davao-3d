@@ -1,8 +1,10 @@
 export interface Route {
   id: string;
   label: string;
+  latlngs: LatLng[];
+  color: string;
   isChecked: boolean;
-  isCameraFollowed: boolean;
+  isFollowed: boolean;
 }
 
 export interface LatLng {

@@ -6,7 +6,7 @@ import { routeOneCoords, routeTwoCoords } from "@/constants";
 import { LatLng, Route } from "@/types";
 import RoutesCard from "@/components/RoutesCard";
 import RouteInfoCard from "@/components/RouteInfoCard";
-import { getRandomColor, haversineDistance, delay } from "@/utils";
+import { tailwindColors, haversineDistance, delay } from "@/utils";
 
 export default function Home() {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -18,28 +18,32 @@ export default function Home() {
     {
       id: "route1",
       label: "Route 1",
+      latlngs: routeOneCoords,
+      color: tailwindColors.blue,
       isChecked: false,
-      isCameraFollowed: false,
+      isFollowed: false,
     },
     {
       id: "route2",
       label: "Route 2",
+      latlngs: routeTwoCoords,
+      color: tailwindColors.green,
       isChecked: false,
-      isCameraFollowed: false,
+      isFollowed: false,
     },
   ]);
 
-  const plotRoute = async (id: string, routeCoord: LatLng[]) => {
+  const plotRoute = async (route: Route) => {
     const map = mapRef.current;
     const poly = document.createElement("gmp-polyline-3d");
     poly.setAttribute("altitude-mode", "clamp-to-ground");
-    poly.setAttribute("stroke-color", getRandomColor());
+    poly.setAttribute("stroke-color", route.color);
     poly.setAttribute("stroke-width", "10");
-    poly.setAttribute("id", id);
+    poly.setAttribute("id", route.id);
     map!.appendChild(poly);
 
     customElements.whenDefined(poly.localName).then(() => {
-      (poly as any).coordinates = routeCoord;
+      (poly as any).coordinates = route.latlngs;
     });
   };
 
@@ -51,11 +55,7 @@ export default function Home() {
     );
     setRoutes(updatedRoutes);
     if (!updatedRoute.isChecked) {
-      if (updatedRoute.id === "route1") {
-        plotRoute(updatedRoute.id, routeOneCoords);
-      } else if (updatedRoute.id === "route2") {
-        plotRoute(updatedRoute.id, routeTwoCoords);
-      }
+      plotRoute(updatedRoute);
     } else {
       const map = mapRef.current;
       const poly = map!.querySelector(`#${updatedRoute.id}`);
@@ -114,35 +114,33 @@ export default function Home() {
   };
 
   const handleRouteInfoCardButton = async (selectedRoute: Route) => {
-    if (!selectedRoute.isCameraFollowed) {
+    if (!selectedRoute.isFollowed) {
       //if there is isCameraFollowed, stop the camera animation and set isCameraFollowed to false
-      if (routes.some((route) => route.isCameraFollowed)) {
+      if (routes.some((route) => route.isFollowed)) {
         const map = mapRef.current;
         cancelRef.current = true;
         (map as any).stopCameraAnimation;
         await delay(1000);
         const updatedRoutes = routes.map((route) =>
-          route.isCameraFollowed ? { ...route, isCameraFollowed: false } : route
+          route.isFollowed ? { ...route, isCameraFollowed: false } : route
         );
         setRoutes(updatedRoutes);
       }
       const updatedRoutes = routes.map((route) =>
         route.id === selectedRoute.id
-          ? { ...route, isCameraFollowed: !selectedRoute.isCameraFollowed }
+          ? { ...route, isCameraFollowed: !selectedRoute.isFollowed }
           : route
       );
       setRoutes(updatedRoutes);
       cancelRef.current = false;
-      selectedRoute.id === "route1"
-        ? await cameraFollowPath(routeOneCoords)
-        : await cameraFollowPath(routeTwoCoords);
+      await cameraFollowPath(selectedRoute.latlngs);
     } else {
       const map = mapRef.current;
       cancelRef.current = true;
       (map as any).stopCameraAnimation();
       const updatedRoutes = routes.map((route) =>
         route.id === selectedRoute.id
-          ? { ...route, isCameraFollowed: !selectedRoute.isCameraFollowed }
+          ? { ...route, isCameraFollowed: !selectedRoute.isFollowed }
           : route
       );
       setRoutes(updatedRoutes);

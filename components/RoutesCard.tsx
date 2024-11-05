@@ -10,10 +10,6 @@ const RoutesCard: React.FC<RoutesCardProps> = ({
   routes,
   onCheckboxChange,
 }) => {
-  const handleCheckboxChange = (rCheckbox: Route) => {
-    onCheckboxChange(rCheckbox);
-  };
-
   return (
     <div className="absolute top-4 left-4 bg-white shadow-lg rounded-lg p-4">
       <h2 className="text-lg font-semibold">Routes</h2>
@@ -24,7 +20,7 @@ const RoutesCard: React.FC<RoutesCardProps> = ({
             type="checkbox"
             id={rCheckbox.id}
             checked={rCheckbox.isChecked}
-            onChange={() => handleCheckboxChange(rCheckbox)}
+            onChange={() => onCheckboxChange(rCheckbox)}
             className="form-checkbox h-5 w-5 text-blue-600"
           />
           <label htmlFor={rCheckbox.id} className="text-sm text-gray-600">

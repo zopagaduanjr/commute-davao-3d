@@ -1,9 +1,8 @@
-export const getRandomColor = (): string => {
-  const r = Math.floor(Math.random() * 256);
-  const g = Math.floor(Math.random() * 256);
-  const b = Math.floor(Math.random() * 256);
-  const a = 0.75;
-  return `rgba(${r}, ${g}, ${b}, ${a})`;
+export const tailwindColors = {
+  red: 'rgba(239, 68, 68, 1)',
+  blue: 'rgba(59, 130, 246, 1)',
+  green: 'rgba(34, 197, 94, 1)',
+  yellow: 'rgba(234, 179, 8, 1)',
 };
 
 export const haversineDistance = (
