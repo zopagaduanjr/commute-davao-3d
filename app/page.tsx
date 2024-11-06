@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import Script from "next/script";
-import { obreroCoords, routeTwoCoords } from "@/route-coords";
+import { buhanginCoords, obreroCoords } from "@/route-coords";
 import { obreroInfo } from "@/route-info";
 import { Landmark, Route } from "@/types";
 import RoutesCard from "@/components/RoutesCard";
@@ -16,6 +16,7 @@ export default function Home() {
   const mapRef = useRef<HTMLElement | null>(null);
   const cancelRef = useRef<boolean>(false);
   const routeFollowingRef = useRef<string | null>(null);
+  const landmarkFollowingRef = useRef<boolean>(false);
 
   const [routes, setRoutes] = useState<Route[]>([
     {
@@ -29,11 +30,11 @@ export default function Home() {
       isFollowed: false,
     },
     {
-      id: "route2",
-      label: "Route 2",
+      id: "buhangin",
+      label: "Buhangin via JP",
       info: "",
       landmarks: [],
-      latlngs: routeTwoCoords,
+      latlngs: buhanginCoords,
       color: tailwindColors.green,
       isChecked: false,
       isFollowed: false,
@@ -54,7 +55,7 @@ export default function Home() {
     }
   };
 
-  const plotRoute = async (route: Route) => {
+  const plotRoute = (route: Route) => {
     const map = mapRef.current;
     const poly = document.createElement("gmp-polyline-3d");
     poly.setAttribute("altitude-mode", "clamp-to-ground");
@@ -81,8 +82,9 @@ export default function Home() {
       (map as any).flyCameraTo({
         endCamera: {
           center: { ...coord, altitude: 0 },
-          tilt: i === 0 ? 45 : (map as any).tilt,
-          range: i === 0 ? 300 : (map as any).range,
+          tilt: i === 0 ? 45 : (map as any).tilt > 45 ? (map as any).tilt : 45,
+          range:
+            i === 0 ? 300 : (map as any).range > 300 ? (map as any).range : 300,
         },
         durationMillis: 3434,
       });
@@ -94,8 +96,8 @@ export default function Home() {
     cancelRef.current = true;
     routeFollowingRef.current = null;
     const map = mapRef.current;
-    (map as any).stopCameraAnimation();
     await waitForCancel();
+    (map as any).stopCameraAnimation();
   };
 
   const waitForCancel = async () => {
@@ -139,19 +141,25 @@ export default function Home() {
     }
   };
 
-  const handleToggleFollow = (selectedRoute: Route) => {
-    const updatedRoutes = routes.map((route) =>
-      route.id === selectedRoute.id
-        ? { ...route, isFollowed: !selectedRoute.isFollowed }
-        : { ...route, isFollowed: false }
-    );
-    setRoutes(updatedRoutes);
+  const handleToggleFollow = async (selectedRoute: Route) => {
     if (selectedRoute.isFollowed) {
       stopCameraFollow();
+      const updatedRoutes = routes.map((route) =>
+        route.id === selectedRoute.id
+          ? { ...route, isFollowed: !selectedRoute.isFollowed }
+          : { ...route, isFollowed: false }
+      );
+      setRoutes(updatedRoutes);
     } else {
       if (routeFollowingRef.current) {
-        stopCameraFollow();
+        await stopCameraFollow();
       }
+      const updatedRoutes = routes.map((route) =>
+        route.id === selectedRoute.id
+          ? { ...route, isFollowed: !selectedRoute.isFollowed }
+          : { ...route, isFollowed: false }
+      );
+      setRoutes(updatedRoutes);
       startCameraFollow(selectedRoute);
     }
   };
@@ -179,8 +187,8 @@ export default function Home() {
     (map as any).flyCameraTo({
       endCamera: {
         center: { ...landmark.latlng, altitude: 0 },
-        tilt: (map as any).tilt,
-        range: (map as any).range,
+        tilt: 45,
+        range: 300,
       },
       durationMillis: 3434,
     });
@@ -189,8 +197,8 @@ export default function Home() {
     (map as any).flyCameraAround({
       camera: {
         center: { ...landmark.latlng, altitude: 0 },
-        tilt: (map as any).tilt,
-        range: (map as any).range,
+        tilt: 45,
+        range: 300,
       },
       durationMillis: 30000,
       rounds: 1,
