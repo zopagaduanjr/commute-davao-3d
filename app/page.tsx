@@ -32,8 +32,8 @@ export default function Home() {
     {
       id: "buhangin",
       label: "Buhangin via JP",
-      info: "",
-      landmarks: [],
+      info: obreroInfo,
+      landmarks: obreroLandmarks,
       latlngs: buhanginCoords,
       color: tailwindColors.green,
       isChecked: false,
@@ -52,6 +52,15 @@ export default function Home() {
         north: 7.3,
         east: 125.7,
       };
+    }
+  };
+
+  const setMapClickListener = () => {
+    const map = mapRef.current;
+    if (map) {
+      (map as any).addEventListener("gmp-click", (clickEvent: any) => {
+        (map as any).stopCameraAnimation();
+      });
     }
   };
 
@@ -227,6 +236,7 @@ export default function Home() {
         onLoad={() => {
           console.log("Google Maps script loaded successfully");
           setBounds();
+          setMapClickListener();
         }}
         onError={(e) => {
           console.error("Error loading Google Maps script", e);

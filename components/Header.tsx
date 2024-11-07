@@ -8,7 +8,13 @@ const Header: React.FC = () => {
         <div className="text-lg font-bold">Commute Davao 3D</div>
         <ul className="flex space-x-4">
           <li>
-            <Link href="https://commutedavao.com">Home</Link>
+            <Link
+              href="https://commutedavao.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              2D
+            </Link>
           </li>
         </ul>
       </nav>

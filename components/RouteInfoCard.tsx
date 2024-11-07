@@ -33,9 +33,10 @@ const RouteInfoCard: React.FC<CardProps> = ({
   return (
     <div className="absolute top-4 right-4 bg-gray-800 text-white p-4 shadow-lg rounded-lg max-w-md">
       <div className="sticky top-0 flex flex-row justify-between">
-        <h2 className="text-lg font-semibold">
-          {selectedOption.label} Route Information
-        </h2>
+        <div className="flex flex-col">
+          <h2 className="text-xl font-semibold">{selectedOption.label}</h2>
+          <h3 className="text-sm font-semibold">Route Information</h3>
+        </div>
         <Dropdown
           label={selectedOption.label || ""}
           options={currentRoutes}
