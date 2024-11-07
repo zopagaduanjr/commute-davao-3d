@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import Script from "next/script";
 import { buhanginCoords, obreroCoords } from "@/route-coords";
-import { obreroInfo } from "@/route-info";
+import { obreroInfo, buhanginInfo } from "@/route-info";
 import { Landmark, Route } from "@/types";
 import RoutesCard from "@/components/RoutesCard";
 import RouteInfoCard from "@/components/RouteInfoCard";
@@ -32,7 +32,7 @@ export default function Home() {
     {
       id: "buhangin",
       label: "Buhangin via JP",
-      info: obreroInfo,
+      info: buhanginInfo,
       landmarks: obreroLandmarks,
       latlngs: buhanginCoords,
       color: tailwindColors.green,
@@ -69,7 +69,7 @@ export default function Home() {
     const poly = document.createElement("gmp-polyline-3d");
     poly.setAttribute("altitude-mode", "clamp-to-ground");
     poly.setAttribute("stroke-color", route.color);
-    poly.setAttribute("stroke-width", "10");
+    poly.setAttribute("stroke-width", "20");
     poly.setAttribute("id", route.id);
     map!.appendChild(poly);
 
