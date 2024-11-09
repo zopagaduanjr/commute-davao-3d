@@ -32,7 +32,7 @@ export default function RootLayout({
       >
         <div className="flex flex-col h-screen">
           <Header />
-          <div className="flex-grow relative">{children}</div>
+          <div className="flex-grow relative overflow-y-auto">{children}</div>
         </div>
       </body>
     </html>

@@ -31,8 +31,8 @@ const RouteInfoCard: React.FC<CardProps> = ({
   };
 
   return (
-    <div className="absolute top-4 right-4 bg-gray-800 text-white p-4 shadow-lg rounded-lg max-w-md">
-      <div className="sticky top-0 flex flex-row justify-between">
+    <div className="bg-gray-800 text-white p-4 shadow-lg rounded-lg">
+      <div className="flex flex-row justify-between">
         <div className="flex flex-col">
           <h2 className="text-xl font-semibold">{selectedOption.label}</h2>
           <h3 className="text-sm font-semibold">Route Information</h3>
@@ -43,7 +43,7 @@ const RouteInfoCard: React.FC<CardProps> = ({
           onSelect={handleSelect}
         />
       </div>
-      <div className="mt-2 flex flex-col items-start max-h-64 overflow-y-auto">
+      <div className="mt-2 flex flex-col items-start">
         {selectedOption.landmarks.length > 0 && (
           <div>
             <h3 className="text-lg font-semibold">Landmarks</h3>
@@ -60,7 +60,7 @@ const RouteInfoCard: React.FC<CardProps> = ({
         )}
         <p className="text-sm my-4">{selectedOption.info}</p>
       </div>
-      <div className="sticky bottom-0 w-full">
+      <div className="w-full">
         <button
           className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           onClick={() => onFollowButtonClick(selectedOption)}

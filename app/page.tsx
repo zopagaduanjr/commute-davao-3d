@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import Script from "next/script";
-import { buhanginCoords, obreroCoords } from "@/route-coords";
+import { buhanginCoords, obreroCoords, sasaCoords } from "@/route-coords";
 import { obreroInfo, buhanginInfo } from "@/route-info";
 import { Landmark, Route } from "@/types";
 import RoutesCard from "@/components/RoutesCard";
@@ -31,11 +31,21 @@ export default function Home() {
     },
     {
       id: "buhangin",
-      label: "Buhangin via JP",
+      label: "Buhangin",
       info: buhanginInfo,
       landmarks: obreroLandmarks,
       latlngs: buhanginCoords,
       color: tailwindColors.green,
+      isChecked: false,
+      isFollowed: false,
+    },
+    {
+      id: "sasa",
+      label: "Sasa",
+      info: buhanginInfo,
+      landmarks: obreroLandmarks,
+      latlngs: sasaCoords,
+      color: tailwindColors.red,
       isChecked: false,
       isFollowed: false,
     },
@@ -69,7 +79,7 @@ export default function Home() {
     const poly = document.createElement("gmp-polyline-3d");
     poly.setAttribute("altitude-mode", "clamp-to-ground");
     poly.setAttribute("stroke-color", route.color);
-    poly.setAttribute("stroke-width", "20");
+    poly.setAttribute("stroke-width", "16");
     poly.setAttribute("id", route.id);
     map!.appendChild(poly);
 
@@ -209,7 +219,7 @@ export default function Home() {
         tilt: 45,
         range: 300,
       },
-      durationMillis: 30000,
+      durationMillis: 45000,
       rounds: 1,
     });
   };
@@ -242,24 +252,40 @@ export default function Home() {
           console.error("Error loading Google Maps script", e);
         }}
       />
-      <gmp-map-3d
-        heading="25"
-        range="2500"
-        tilt="45"
-        center="7.087238671006556,125.61437310997654,165"
-        ref={mapRef}
-      ></gmp-map-3d>
-      <RoutesCard
-        routes={routes}
-        onCheckboxChange={handleTogglePlot}
-      ></RoutesCard>
-      {routes.some((route) => route.isChecked) && (
-        <RouteInfoCard
+      <div className="flex h-full">
+        <div
+          className={`transition-all duration-500 ${
+            routes.some((route) => route.isChecked) ? "w-4/5" : "w-full"
+          }`}
+        >
+          <gmp-map-3d
+            heading="25"
+            range="2500"
+            tilt="45"
+            center="7.087238671006556,125.61437310997654,165"
+            ref={mapRef}
+          ></gmp-map-3d>
+        </div>
+        <RoutesCard
           routes={routes}
-          onFollowButtonClick={handleToggleFollow}
-          onLandmarkButtonClick={handleLandmarkClick}
-        />
-      )}
+          onCheckboxChange={handleTogglePlot}
+        ></RoutesCard>
+        <div
+          className={`transition-all duration-500 ${
+            routes.some((route) => route.isChecked) ? "w-1/5" : "w-0"
+          } bg-gray-800 text-white h-full`}
+        >
+          {routes.some((route) => route.isChecked) && (
+            <div className="h-full max-h-screen overflow-y-auto">
+              <RouteInfoCard
+                routes={routes}
+                onFollowButtonClick={handleToggleFollow}
+                onLandmarkButtonClick={handleLandmarkClick}
+              />
+            </div>
+          )}
+        </div>
+      </div>
     </>
   );
 }
