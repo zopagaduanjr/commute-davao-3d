@@ -31,17 +31,19 @@ const RouteInfoCard: React.FC<CardProps> = ({
   };
 
   return (
-    <div className="bg-gray-800 text-white p-4 shadow-lg rounded-lg">
+    <div className="text-white p-4">
       <div className="flex flex-row justify-between">
         <div className="flex flex-col">
           <h2 className="text-xl font-semibold">{selectedOption.label}</h2>
           <h3 className="text-sm font-semibold">Route Information</h3>
         </div>
-        <Dropdown
-          label={selectedOption.label || ""}
-          options={currentRoutes}
-          onSelect={handleSelect}
-        />
+        {currentRoutes.length > 1 && (
+          <Dropdown
+            label={selectedOption.label || ""}
+            options={currentRoutes}
+            onSelect={handleSelect}
+          />
+        )}
       </div>
       <div className="mt-2 flex flex-col items-start">
         {selectedOption.landmarks.length > 0 && (

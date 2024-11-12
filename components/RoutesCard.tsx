@@ -11,7 +11,7 @@ const RoutesCard: React.FC<RoutesCardProps> = ({
   onCheckboxChange,
 }) => {
   return (
-    <div className="absolute top-4 left-4 bg-white text-black shadow-lg rounded-lg p-4">
+    <div className="absolute top-4 left-4 bg-white text-black shadow-lg rounded-lg p-4 w-md max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl transition-all duration-500">
       <div className="sticky top-0 flex flex-col">
         <h2 className="text-lg font-semibold">Jeepney Routes</h2>
         <p className="text-base text-gray-600">
