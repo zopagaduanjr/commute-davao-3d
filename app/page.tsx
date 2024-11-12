@@ -2,13 +2,12 @@
 
 import { useRef, useState } from "react";
 import Script from "next/script";
-import { buhanginCoords, obreroCoords, sasaCoords } from "@/route-coords";
-import { obreroInfo, buhanginInfo } from "@/route-info";
+
 import { Landmark, Route } from "@/types";
 import RoutesCard from "@/components/RoutesCard";
 import RouteInfoCard from "@/components/RouteInfoCard";
-import { tailwindColors, divideRouteIntoSegments, delay } from "@/utils";
-import { obreroLandmarks } from "@/route-landmarks";
+import { divideRouteIntoSegments, delay } from "@/utils";
+import { jeepRoutes } from "@/constants/routes";
 
 export default function Home() {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -18,38 +17,7 @@ export default function Home() {
   const routeFollowingRef = useRef<string | null>(null);
   const landmarkFollowingRef = useRef<boolean>(false);
 
-  const [routes, setRoutes] = useState<Route[]>([
-    {
-      id: "obrero",
-      label: "Obrero",
-      info: obreroInfo,
-      landmarks: obreroLandmarks,
-      latlngs: obreroCoords,
-      color: tailwindColors.blue,
-      isChecked: false,
-      isFollowed: false,
-    },
-    {
-      id: "buhangin",
-      label: "Buhangin",
-      info: buhanginInfo,
-      landmarks: obreroLandmarks,
-      latlngs: buhanginCoords,
-      color: tailwindColors.green,
-      isChecked: false,
-      isFollowed: false,
-    },
-    {
-      id: "sasa",
-      label: "Sasa",
-      info: buhanginInfo,
-      landmarks: obreroLandmarks,
-      latlngs: sasaCoords,
-      color: tailwindColors.red,
-      isChecked: false,
-      isFollowed: false,
-    },
-  ]);
+  const [routes, setRoutes] = useState<Route[]>(jeepRoutes);
 
   const [markers, setMarkers] = useState<string[]>([]);
 
