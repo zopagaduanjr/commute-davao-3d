@@ -32,11 +32,10 @@ const RouteInfoCard: React.FC<CardProps> = ({
 
   return (
     <div className="text-white p-4">
-      <div className="flex flex-row justify-between">
-        <div className="flex flex-col">
-          <h2 className="text-xl font-semibold">{selectedOption.label}</h2>
-          <h3 className="text-sm font-semibold">Route Information</h3>
-        </div>
+      <div className="flex flex-row justify-between w-full max-w-full">
+        <h2 className="text-xl font-semibold flex-grow">
+          {selectedOption.label}
+        </h2>
         {currentRoutes.length > 1 && (
           <Dropdown
             label={selectedOption.label || ""}
@@ -45,6 +44,7 @@ const RouteInfoCard: React.FC<CardProps> = ({
           />
         )}
       </div>
+      <h3 className="text-sm font-semibold">Route Information</h3>
       <div className="mt-2 flex flex-col items-start">
         {selectedOption.landmarks.length > 0 && (
           <div>
@@ -60,7 +60,7 @@ const RouteInfoCard: React.FC<CardProps> = ({
             ))}
           </div>
         )}
-        <p className="text-sm my-4">{selectedOption.info}</p>
+        <p className="text-sm my-2">{selectedOption.info}</p>
       </div>
       <div className="w-full">
         <button

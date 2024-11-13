@@ -68,7 +68,7 @@ export default function Home() {
       let coord = route.latlngs[indexes[i]];
       (map as any).flyCameraTo({
         endCamera: {
-          center: { ...coord, altitude: 0 },
+          center: { ...coord, altitude: route.altitude || 0 },
           tilt: i === 0 ? 45 : (map as any).tilt > 45 ? (map as any).tilt : 45,
           range:
             i === 0 ? 300 : (map as any).range > 300 ? (map as any).range : 300,

@@ -20,7 +20,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, options, onSelect }) => {
   };
 
   return (
-    <div className="relative inline-block text-left">
+    <div className="relative inline-block text-left flex-shrink-0 w-32">
       <div>
         <button
           type="button"

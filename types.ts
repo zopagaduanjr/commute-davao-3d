@@ -4,6 +4,7 @@ export interface Route {
   info: string;
   landmarks: Landmark[];
   latlngs: LatLng[];
+  altitude?: number;
   color: string;
   isChecked: boolean;
   isFollowed: boolean;
