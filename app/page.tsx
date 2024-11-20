@@ -223,7 +223,9 @@ export default function Home() {
       <div className="flex h-full">
         <div
           className={`transition-all duration-500 ${
-            routes.some((route) => route.isChecked) ? "w-4/5" : "w-full"
+            routes.some((route) => route.isChecked)
+              ? "w-full md:w-4/5"
+              : "w-full"
           }`}
         >
           <gmp-map-3d
@@ -240,8 +242,10 @@ export default function Home() {
         ></RoutesCard>
         <div
           className={`transition-all duration-500 ${
-            routes.some((route) => route.isChecked) ? "w-1/5" : "w-0"
-          } bg-gray-800 text-white h-full`}
+            routes.some((route) => route.isChecked)
+              ? "w-full h-1/5 fixed bottom-0 md:w-1/5 md:h-full md:relative md:bottom-auto"
+              : "w-0"
+          } bg-gray-800 text-white`}
         >
           {routes.some((route) => route.isChecked) && (
             <div className="h-full max-h-screen overflow-y-auto">
