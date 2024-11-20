@@ -125,3 +125,129 @@ export const grandRegal: Landmark = {
   label: 'Grand Regal Hotel',
   latlng: { lat: 7.10375063667412, lng: 125.64096805580667 },
 };
+
+export const damosaGateway: Landmark = {
+  id: 'lm-damosaGateway',
+  label: 'Damosa Gateway',
+  latlng: { lat: 7.102082776800946, lng: 125.63276405555644 },
+};
+
+export const smLanang: Landmark = {
+  id: 'lm-smLanang',
+  label: 'SM Lanang Premier',
+  latlng: { lat: 7.099112338336151, lng: 125.63112972672056 },
+};
+
+export const carmeliteChurch: Landmark = {
+  id: 'lm-carmeliteChurch',
+  label: 'Carmelite Church',
+  latlng: { lat: 7.100458061842574, lng: 125.6287053365147 },
+};
+
+export const davaoCityWaterDistrict: Landmark = {
+  id: 'lm-davaoCityWaterDistrict',
+  label: 'Davao City Water District',
+  latlng: { lat: 7.099222284883905, lng: 125.62469193836428 },
+};
+
+export const spmc: Landmark = {
+  id: 'lm-southernPhilippinesMedicalCenter',
+  label: 'Southern Philippines Medical Center',
+  latlng: { lat: 7.098617564742807, lng: 125.61993345555625 },
+};
+
+export const mdmrc: Landmark = {
+  id: 'lm-metroDavaoMedicalResearchCenter',
+  label: 'Metro Davao Medical Research Center',
+  latlng: { lat: 7.095233979818809, lng: 125.61329841137807 },
+};
+
+export const abreezaMall: Landmark = {
+  id: 'lm-abrezaMall',
+  label: 'Abreeza Mall',
+  latlng: { lat: 7.092158253911314, lng: 125.61249302672061 },
+};
+
+export const acaciaMandugTerminal: Landmark = {
+  id: 'lm-acaciaMandugTerminal',
+  label: 'Acacia Mandug Terminal',
+  latlng: { lat: 7.074234650695615, lng: 125.61238279617233 },
+};
+
+export const ponciano: Landmark = {
+  id: 'lm-ponciano',
+  label: 'Ponciano Street',
+  latlng: { lat: 7.070716356781722, lng: 125.61013696365882 },
+};
+
+export const um: Landmark = {
+  id: 'lm-universityOfMindanao',
+  label: 'University of Mindanao',
+  latlng: { lat: 7.067469644701064, lng: 125.60919345370667 },
+};
+
+export const sangguniangPanlungsod: Landmark = {
+  id: 'lm-sangguniangPanlungsod',
+  label: 'Sangguniang Panlungsod',
+  latlng: { lat: 7.064383929323648, lng: 125.60906840626393 },
+};
+
+export const ramonMagsaysayPark: Landmark = {
+  id: 'lm-ramonMagsaysayPark',
+  label: 'Ramon Magsaysay Park',
+  latlng: { lat: 7.074522705973319, lng: 125.62560809603544 },
+};
+
+export const agdaoFlyover: Landmark = {
+  id: 'lm-agdaoFlyover',
+  label: 'Agdao Flyover',
+  latlng: { lat: 7.083557272764483, lng: 125.62457636904922 },
+};
+
+export const assumptionCollegeOfDavao: Landmark = {
+  id: 'lm-assumptionCollegeOfDavao',
+  label: 'Assumption College of Davao',
+  latlng: { lat: 7.087973636165698, lng: 125.62376880952834 },
+};
+
+export const philippineStatisticsOffice: Landmark = {
+  id: 'lm-philippineStatisticsOffice',
+  label: 'Philippine Statistics Office',
+  latlng: { lat: 7.094221879581217, lng: 125.62115773901363 },
+};
+
+export const nhaBuhangin: Landmark = {
+  id: 'lm-nhaBuhangin',
+  label: 'NHA Buhangin',
+  latlng: { lat: 7.114866134211908, lng: 125.62332142084438 },
+};
+
+export const buhanginGym: Landmark = {
+  id: 'lm-buhanginGym',
+  label: 'Buhangin Gym',
+  latlng: { lat: 7.109123484680461, lng: 125.61572934175844 },
+};
+
+export const milan: Landmark = {
+  id: 'lm-milan',
+  label: 'Milan',
+  latlng: { lat: 7.109090201522036, lng: 125.61323795094404 },
+};
+
+export const ladislawa: Landmark = {
+  id: 'lm-ladislawa',
+  label: 'Ladislawa',
+  latlng: { lat: 7.098909257775168, lng: 125.61260456547791 },
+};
+
+export const davaoDoctorsHospital: Landmark = {
+  id: 'lm-davaoDoctorsHospital',
+  label: 'Davao Doctors Hospital',
+  latlng: { lat: 7.0703815325123305, lng: 125.60433988439193 },
+};
+
+export const bankerohanPublicMarket: Landmark = {
+  id: 'lm-bankerohanPublicMarket',
+  label: 'Bankerohan Public Market',
+  latlng: { lat: 7.068627474743353, lng: 125.60110135049948 },
+};

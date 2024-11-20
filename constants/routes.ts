@@ -1,6 +1,11 @@
 import { Route } from '@/types';
-import { obreroInfo, buhanginInfo } from './route-info';
-import { obreroLandmarks, sasaLandmarks } from './route-landmarks';
+import { obreroInfo, buhanginInfo, sasaInfo, route4Info } from './route-info';
+import {
+  buhanginLandmarks,
+  obreroLandmarks,
+  route4Landmarks,
+  sasaLandmarks,
+} from './route-landmarks';
 import {
   obreroCoords,
   buhanginCoords,
@@ -24,7 +29,7 @@ export const jeepRoutes: Route[] = [
     id: 'buhangin',
     label: 'Buhangin',
     info: buhanginInfo,
-    landmarks: [],
+    landmarks: buhanginLandmarks,
     latlngs: buhanginCoords,
     color: tailwindColors.green,
     isChecked: false,
@@ -33,7 +38,7 @@ export const jeepRoutes: Route[] = [
   {
     id: 'sasa',
     label: 'Sasa',
-    info: '',
+    info: sasaInfo,
     landmarks: sasaLandmarks,
     latlngs: sasaCoords,
     color: tailwindColors.red,
@@ -43,8 +48,8 @@ export const jeepRoutes: Route[] = [
   {
     id: 'route4',
     label: 'Route 4',
-    info: '',
-    landmarks: [],
+    info: route4Info,
+    landmarks: route4Landmarks,
     latlngs: route4Coords,
     color: tailwindColors.yellow,
     isChecked: false,

@@ -14,3 +14,19 @@ It goes straight to Magallanes Street and passes by Sangguniang Panlungsod. It t
 entering C.M. Recto Street, passing through San Pedro Cathedral. Going straight to C.M. Recto it also passes through
 Ateneo de Davao University, and enters JP Laurel avenue, to finally head back to NHA Buhangin.
 `;
+
+export const sasaInfo: string = `
+The route starts at Davao Samal Ferry Terminal, then proceeds to Seawind. From there, it moves on to Samal Ferry Wharf and continues to Old Airport.
+Next, it passes through Nova Tierra and Waterfront, followed by Insular. The route then heads to Azuela Cove and Grand Regal, before reaching Damosa.
+After that, it goes to SM Lanang and Carmelite Church. The journey continues to Davao City Water District and Southern Philippines Medical Center.
+It then moves on to Metro Davao Medical Research Center and Abreeza Ayala Mall. The route proceeds to NCCC VP Mall and Gaisano Mall, followed by Acacia Mandug Jeepney Terminal.
+It then heads to Ponciano and University of Mindanao, before reaching Sangguniang Panlungsod. The route continues to Boulevard and Ramon Magsaysay Park, then passes through Agdao Flyover and Assumption College.
+Finally, it reaches NSO and goes back to Sasa following the departure route.
+`;
+
+export const route4Info: string = `
+The journey of the route begins at Southern Philippines Medical Center. From there, it proceeds to NSO and then to Assumption College.
+The route continues to Agdao Flyover and passes through Ramon Magsaysay Park. Next, it heads to Boulevard and then to San Pedro Cathedral Parish.
+The journey continues to Avida Towers and then to Gmall. After that, it moves on to Victoria and then to Abreeza.
+Finally, the route returns to Southern Philippines Medical Center, completing the cycle.
+`;
