@@ -45,22 +45,26 @@ const RouteInfoCard: React.FC<CardProps> = ({
         )}
       </div>
       <h3 className="text-sm font-semibold">Route Information</h3>
-      <div className="mt-2 flex flex-col items-start">
+      <div className="my-2 flex flex-col items-start">
         {selectedOption.landmarks.length > 0 && (
           <div>
             <h3 className="text-lg font-semibold">Landmarks</h3>
-            {selectedOption.landmarks.map((landmark) => (
-              <div
-                key={landmark.label}
-                className="text-lg cursor-pointer text-gray-300 hover:underline"
-                onClick={() => onLandmarkButtonClick(landmark)}
-              >
-                {landmark.label}
-              </div>
-            ))}
+            <div className="max-h-64 overflow-y-auto">
+              {selectedOption.landmarks.map((landmark) => (
+                <div
+                  key={landmark.label}
+                  className="text-lg cursor-pointer text-gray-300 hover:underline"
+                  onClick={() => onLandmarkButtonClick(landmark)}
+                >
+                  {landmark.label}
+                </div>
+              ))}
+            </div>
           </div>
         )}
-        <p className="text-sm my-2">{selectedOption.info}</p>
+        <div className="max-h-64 overflow-y-auto">
+          <p className="text-sm my-2">{selectedOption.info}</p>
+        </div>
       </div>
       <div className="w-full">
         <button
