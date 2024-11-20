@@ -1,6 +1,6 @@
 import { Route } from '@/types';
 import { obreroInfo, buhanginInfo } from './route-info';
-import { obreroLandmarks } from './route-landmarks';
+import { obreroLandmarks, sasaLandmarks } from './route-landmarks';
 import {
   obreroCoords,
   buhanginCoords,
@@ -34,7 +34,7 @@ export const jeepRoutes: Route[] = [
     id: 'sasa',
     label: 'Sasa',
     info: '',
-    landmarks: [],
+    landmarks: sasaLandmarks,
     latlngs: sasaCoords,
     color: tailwindColors.red,
     isChecked: false,
